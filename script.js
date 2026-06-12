@@ -187,13 +187,38 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
         const btnText = submitBtn.querySelector('.btn-text');
         const btnIcon = submitBtn.querySelector('.btn-icon');
-        const originalText = btnText.textContent;
         
-        btnText.textContent = 'Procesando Reserva...';
+        btnText.textContent = 'Redirigiendo a WhatsApp...';
         btnIcon.className = 'fa-solid fa-circle-notch fa-spin btn-icon';
 
-        // Simulate API Request (1.5 seconds)
+        // Gather form data
+        const name = document.getElementById('form-name').value;
+        const email = document.getElementById('form-email').value;
+        const phone = document.getElementById('form-phone').value;
+        const boxSelect = document.getElementById('form-pack');
+        const boxText = boxSelect.options[boxSelect.selectedIndex].text;
+        const msg = document.getElementById('form-msg').value;
+
+        // Target WhatsApp number: +54 9 11 6957-8193 -> 5491169578193
+        const wpNumber = "5491169578193";
+        
+        // Build the WhatsApp message
+        let wpText = `¡Hola Alfajores FOMO! 🤤🍫\nQuiero realizar una reserva:\n\n`;
+        wpText += `👤 *Nombre:* ${name}\n`;
+        wpText += `📧 *Email:* ${email}\n`;
+        wpText += `📞 *WhatsApp:* ${phone}\n`;
+        wpText += `📦 *Box:* ${boxText}\n`;
+        if (msg.trim()) {
+            wpText += `📝 *Mensaje:* ${msg}\n`;
+        }
+
+        const wpUrl = `https://wa.me/${wpNumber}?text=${encodeURIComponent(wpText)}`;
+
+        // Simulate API Processing (1.2 seconds) before redirecting
         setTimeout(() => {
+            // Open WhatsApp in a new tab
+            window.open(wpUrl, '_blank');
+
             // Fade out the form
             orderForm.classList.add('fade-out');
             
@@ -202,15 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 orderForm.style.display = 'none';
                 successMsg.classList.add('show');
             }, 300);
-
-            // Print confirmation in console
-            console.log('FOMO Order Submitted Successfully:', {
-                name: document.getElementById('form-name').value,
-                email: document.getElementById('form-email').value,
-                phone: document.getElementById('form-phone').value,
-                box: document.getElementById('form-pack').value,
-                msg: document.getElementById('form-msg').value
-            });
-        }, 1500);
+        }, 1200);
     });
 });
